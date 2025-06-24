@@ -6,7 +6,7 @@ import * as cornerstoneWADOImageLoader from "cornerstone-wado-image-loader";
 import dicomParser from "dicom-parser";
 import Hammer from "hammerjs";
 import { useEffect } from "react";
-import { NavLink, Navigate, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes } from "react-router-dom";
 import SeriesViewer from "./pages/SeriesViewer";
 import SingleFileViewer from "./pages/SingleFileViewer";
 
@@ -44,13 +44,15 @@ function App() {
       </Header>
 
       <Nav>
-        <StyledNavLink to="/single">단건 파일뷰어</StyledNavLink>
-        <StyledNavLink to="/series">시리즈 뷰어</StyledNavLink>
+        <StyledNavLink to="/" end>
+          단일 DICOM
+        </StyledNavLink>
+        <StyledNavLink to="/series">시리즈 DICOM</StyledNavLink>
+        <StyledNavLink to="/nifti3d">Nifti 3D</StyledNavLink>
       </Nav>
 
       <Routes>
-        <Route path="/" element={<Navigate to="/single" replace />} />
-        <Route path="/single" element={<SingleFileViewer />} />
+        <Route path="/" element={<SingleFileViewer />} />
         <Route path="/series" element={<SeriesViewer />} />
       </Routes>
     </AppContainer>
@@ -59,7 +61,6 @@ function App() {
 
 export default App;
 
-// Styled Components
 const AppContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -92,23 +93,31 @@ const Nav = styled.nav`
   background: rgba(255, 255, 255, 0.1);
   padding: 10px;
   border-radius: 15px;
+  gap: 16px;
 `;
 
 const StyledNavLink = styled(NavLink)`
-  padding: 10px 25px;
-  color: white;
-  text-decoration: none;
-  font-size: 1.1rem;
-  font-weight: 500;
+  padding: 12px 32px;
+  color: #333;
+  background: #fff;
   border-radius: 10px;
-  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  transition: all 0.2s;
+  border: 2px solid transparent;
 
   &.active {
-    background: rgba(255, 255, 255, 0.3);
-    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #764ba2;
+    box-shadow: 0 4px 16px rgba(118, 75, 162, 0.15);
   }
 
   &:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.2);
+    background: #f0f0f0;
+    color: #764ba2;
+    border-color: #e0e0e0;
   }
 `;

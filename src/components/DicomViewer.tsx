@@ -216,23 +216,6 @@ const DicomViewer: React.FC<DicomViewerProps> = ({
   );
 };
 
-const getToolName = (tool: string): string => {
-  switch (tool) {
-    case "Pan":
-      return "이동";
-    case "Zoom":
-      return "확대/축소";
-    case "Wwwc":
-      return "WW/WC";
-    case "Length":
-      return "길이 측정";
-    case "Angle":
-      return "각도 측정";
-    default:
-      return tool;
-  }
-};
-
 export default DicomViewer;
 
 const ViewerContainer = styled.div<{ width: number; height: number }>`
