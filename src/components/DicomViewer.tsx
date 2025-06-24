@@ -20,7 +20,7 @@ const DicomViewer: React.FC<DicomViewerProps> = ({
   height = 512,
 }) => {
   const elementRef = useRef<HTMLDivElement>(null);
-  const [activeTool, setActiveTool] = useState<string>("Length");
+  const [activeTool, setActiveTool] = useState<string>("Pan");
   const [windowWidth, setWindowWidth] = useState<number>(400);
   const [windowCenter, setWindowCenter] = useState<number>(40);
   const [fileList, setFileList] = useState<File[]>([]);
@@ -96,19 +96,32 @@ const DicomViewer: React.FC<DicomViewerProps> = ({
         cornerstoneTools.setToolActive("Zoom", { mouseButtonMask: 2 });
         // 나머지 툴(길이, 각도 등)은 툴바에서 선택 시 활성화
         switch (activeTool) {
+          case "Pan":
+            if (!cornerstoneTools.getToolForElement(element, "Pan")) {
+              cornerstoneTools.addTool(cornerstoneTools.PanTool);
+            }
+            cornerstoneTools.setToolActive("Pan", { mouseButtonMask: 1 });
+            cornerstoneTools.setToolDisabled("Length", element);
+            cornerstoneTools.setToolDisabled("Angle", element);
+            break;
           case "Length":
             if (!cornerstoneTools.getToolForElement(element, "Length")) {
               cornerstoneTools.addTool(cornerstoneTools.LengthTool);
             }
             cornerstoneTools.setToolActive("Length", { mouseButtonMask: 1 });
+            cornerstoneTools.setToolDisabled("Pan", element);
+            cornerstoneTools.setToolDisabled("Angle", element);
             break;
           case "Angle":
             if (!cornerstoneTools.getToolForElement(element, "Angle")) {
               cornerstoneTools.addTool(cornerstoneTools.AngleTool);
             }
             cornerstoneTools.setToolActive("Angle", { mouseButtonMask: 1 });
+            cornerstoneTools.setToolDisabled("Pan", element);
+            cornerstoneTools.setToolDisabled("Length", element);
             break;
           default:
+            cornerstoneTools.setToolDisabled("Pan", element);
             cornerstoneTools.setToolDisabled("Length", element);
             cornerstoneTools.setToolDisabled("Angle", element);
             break;
@@ -138,6 +151,7 @@ const DicomViewer: React.FC<DicomViewerProps> = ({
             onReset={() => {
               if (elementRef.current) cornerstone.reset(elementRef.current);
             }}
+            disabled={fileList.length === 0}
           />
           <WWWCBar
             windowWidth={windowWidth}
@@ -145,6 +159,7 @@ const DicomViewer: React.FC<DicomViewerProps> = ({
             onWWChange={(ww: number) => handlePreset(ww, windowCenter)}
             onWCChange={(wc: number) => handlePreset(windowWidth, wc)}
             onPreset={handlePreset}
+            disabled={fileList.length === 0}
           />
           <FileInfoCard
             title="파일 정보"
@@ -176,7 +191,6 @@ const DicomViewer: React.FC<DicomViewerProps> = ({
           />
         </LeftBar>
         <div>
-          {" "}
           <UploadZone
             onFilesSelected={handleFiles}
             accept=".dcm,.dicom"
@@ -204,7 +218,10 @@ const DicomViewer: React.FC<DicomViewerProps> = ({
                 total={fileList.length}
               />
             )}
-          </ViewerContainer>
+          </ViewerContainer>{" "}
+          <p className="info">
+            마우스 왼쪽 버튼: 이동, 마우스 오른쪽 버튼: 확대/축소
+          </p>
         </div>
       </ViewerRow>
       {isSingle ? (
@@ -250,6 +267,14 @@ const ViewerRow = styled.div`
   padding: 40px;
   background-color: white;
   border-radius: 15px;
+  .info {
+    color: #0082f4;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    line-height: 30px;
+    text-align: center;
+  }
 `;
 
 const LeftBar = styled.div`

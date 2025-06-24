@@ -7,6 +7,7 @@ interface WWWCBarProps {
   onWWChange: (v: number) => void;
   onWCChange: (v: number) => void;
   onPreset: (ww: number, wc: number) => void;
+  disabled?: boolean;
 }
 
 const WWWCBar: React.FC<WWWCBarProps> = ({
@@ -15,6 +16,7 @@ const WWWCBar: React.FC<WWWCBarProps> = ({
   onWWChange,
   onWCChange,
   onPreset,
+  disabled = false,
 }) => (
   <Bar>
     <SliderGroupVertical>
@@ -25,6 +27,7 @@ const WWWCBar: React.FC<WWWCBarProps> = ({
         max={4000}
         value={windowWidth}
         onChange={(e) => onWWChange(Number(e.target.value))}
+        disabled={disabled}
       />
       <SliderValue>{windowWidth}</SliderValue>
     </SliderGroupVertical>
@@ -36,12 +39,17 @@ const WWWCBar: React.FC<WWWCBarProps> = ({
         max={1000}
         value={windowCenter}
         onChange={(e) => onWCChange(Number(e.target.value))}
+        disabled={disabled}
       />
       <SliderValue>{windowCenter}</SliderValue>
     </SliderGroupVertical>
     <PresetGroupVertical>
-      <PresetButton onClick={() => onPreset(40, 40)}>40/40</PresetButton>
-      <PresetButton onClick={() => onPreset(40, 80)}>40/80</PresetButton>
+      <PresetButton onClick={() => onPreset(40, 40)} disabled={disabled}>
+        40/40
+      </PresetButton>
+      <PresetButton onClick={() => onPreset(40, 80)} disabled={disabled}>
+        40/80
+      </PresetButton>
     </PresetGroupVertical>
   </Bar>
 );
@@ -94,5 +102,10 @@ const PresetButton = styled.button`
   &:hover {
     background: #007bff;
     color: #fff;
+  }
+  &:disabled {
+    background: #f1f3f5;
+    color: #adb5bd;
+    cursor: not-allowed;
   }
 `;
